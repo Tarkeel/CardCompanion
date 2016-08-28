@@ -16,5 +16,6 @@ namespace DataAccess.Repositories
         /// Find the repository for handling configuration.
         /// </summary>
         public abstract AbstractConfigurationRepository ConfigurationRepository { get; }
+        public abstract AbstractGameRepository GameRepository { get; }
     }
 }

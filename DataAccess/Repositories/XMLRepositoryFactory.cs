@@ -47,20 +47,30 @@ namespace DataAccess.Repositories
                 Document = new XDocument(
                     new XElement("Repository",
                         new XAttribute("version", currentVersion), //Store which version of the XML datafile we're creating
-                        new XElement("Config")
-                        //TODO: Add new elements for other top nodes
+                        new XElement("Config"),
+                        new XElement("Games")
+                    //TODO: Add new elements for other top nodes
                     )
                 );
                 Save();
             }
             //Initialize Configuration
             configurationRepository = new XMLConfigurationRepository(this);
+            //Initialize Game repository, with next ID from config
+            string nextGameID = ConfigurationRepository.GetValue("NextGameID");
+            if (nextGameID == null || nextGameID.Equals(""))
+            {
+                ConfigurationRepository.SetValue("NextGameID", "1");
+                gameRepository = new XMLGameRepository(this, 1);
+            }
+            else { gameRepository = new XMLGameRepository(this, Convert.ToInt32(nextGameID)); }
         }
         #endregion
         #region Versioning
-        private Int32 currentVersion = 0;
+        private long currentVersion = 0;
         /* Version History:
-         *
+         * 0: Configuration branch
+         * 1: Games branch
          */
         /// <summary>
         /// Update the XML Document to the latest version.
@@ -72,6 +82,8 @@ namespace DataAccess.Repositories
             switch (oldVersion)
             {
                 case 0:
+                    Document.Root.Element("Repository").Add(new XElement("Games"));
+                    Document.Root.Attribute("version").Value = Convert.ToString(currentVersion);
                     return true;
                 default:
                     return false;
@@ -83,6 +95,11 @@ namespace DataAccess.Repositories
         public override AbstractConfigurationRepository ConfigurationRepository
         {
             get { return configurationRepository; }
+        }
+        private XMLGameRepository gameRepository;
+        public override AbstractGameRepository GameRepository
+        {
+            get { return gameRepository; }
         }
         #endregion
         internal void Save()
