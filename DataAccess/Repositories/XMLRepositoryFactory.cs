@@ -72,6 +72,14 @@ namespace DataAccess.Repositories
                 factionRepository = new XMLFactionRepository(this, 1);
             }
             else { factionRepository = new XMLFactionRepository(this, Convert.ToInt32(nextFactionID)); }
+            //Initialize Cardtype repository, with next ID from config
+            string nextCardtypeID = ConfigurationRepository.GetValue("NextCardtypeID");
+            if (nextCardtypeID == null || nextCardtypeID.Equals(""))
+            {
+                ConfigurationRepository.SetValue("NextCardtypeID", "1");
+                cardtypeRepository = new XMLCardtypeRepository(this, 1);
+            }
+            else { cardtypeRepository = new XMLCardtypeRepository(this, Convert.ToInt32(nextCardtypeID)); }
         }
         #endregion
         #region Versioning
@@ -114,6 +122,11 @@ namespace DataAccess.Repositories
         public override AbstractFactionRepository FactionRepository
         {
             get { return factionRepository; }
+        }
+        private XMLCardtypeRepository cardtypeRepository;
+        public override AbstractCardtypeRepository CardtypeRepository
+        {
+            get { return cardtypeRepository; }
         }
         #endregion
         internal void Save()

@@ -21,6 +21,8 @@ namespace DataAccess.Types
         #region Collections
         private ObservableFactionCollection factions;
         public ObservableFactionCollection Factions {  get { return factions; } }
+        private ObservableCardtypeCollection cardtypes;
+        public ObservableCardtypeCollection Cardtypes { get { return cardtypes; } }
         #endregion
         #region Attributes
         private string title;

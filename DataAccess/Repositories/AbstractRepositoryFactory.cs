@@ -18,5 +18,6 @@ namespace DataAccess.Repositories
         public abstract AbstractConfigurationRepository ConfigurationRepository { get; }
         public abstract AbstractGameRepository GameRepository { get; }
         public abstract AbstractFactionRepository FactionRepository { get; }
+        public abstract AbstractCardtypeRepository CardtypeRepository { get; }
     }
 }
