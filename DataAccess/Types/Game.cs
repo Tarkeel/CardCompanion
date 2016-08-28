@@ -11,6 +11,15 @@ namespace DataAccess.Types
     public class ObservableGameCollection : ObservableCollection<Game> { }
     public class Game : Observable
     {
+        internal Game()
+        {
+            factions = new ObservableFactionCollection();
+        }
+        #region Collections
+        private ObservableFactionCollection factions;
+        public ObservableFactionCollection Factions {  get { return factions; } }
+        #endregion
+        #region Attributes
         private long id;
         public long ID
         {
@@ -59,5 +68,6 @@ namespace DataAccess.Types
             get { return bannerPath; }
             set { VerifyPropertyChange<string>("BannerPath", ref bannerPath, ref value); }
         }
+        #endregion
     }
 }

@@ -64,6 +64,14 @@ namespace DataAccess.Repositories
                 gameRepository = new XMLGameRepository(this, 1);
             }
             else { gameRepository = new XMLGameRepository(this, Convert.ToInt32(nextGameID)); }
+            //Initialize Faction repository, with next ID from config
+            string nextFactionID = ConfigurationRepository.GetValue("NextFactionID");
+            if (nextFactionID == null || nextFactionID.Equals(""))
+            {
+                ConfigurationRepository.SetValue("NextFactionID", "1");
+                gameRepository = new XMLGameRepository(this, 1);
+            }
+            else { gameRepository = new XMLGameRepository(this, Convert.ToInt32(nextFactionID)); }
         }
         #endregion
         #region Versioning
@@ -101,6 +109,11 @@ namespace DataAccess.Repositories
         public override AbstractGameRepository GameRepository
         {
             get { return gameRepository; }
+        }
+        private XMLFactionRepository factionRepository;
+        public override AbstractFactionRepository FactionRepository
+        {
+            get { return factionRepository; }
         }
         #endregion
         internal void Save()

@@ -55,7 +55,7 @@ namespace DataAccess.BulkLoaders
                 OleDbCommand cmd = new OleDbCommand();
                 cmd.Connection = connection;
                 //Parse file and build resultset
-
+                //TODO: dynamic determination of table names
                 //Games:
                 cmd.CommandText = string.Format("SELECT * FROM [{0}]", "Game$");
                 DataTable table = new DataTable("Games");
@@ -75,7 +75,6 @@ namespace DataAccess.BulkLoaders
         }
         private void importGames(DataTable source)
         {
-
             int colTitle = -1;
             int colYear = -1;
             int colUrl = -1;

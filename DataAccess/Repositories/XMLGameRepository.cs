@@ -44,7 +44,7 @@ namespace DataAccess.Repositories
         public override Game GetGame(int id)
         {
             Game _game;
-            //Check if we already have the show stored
+            //Check if we already have the game stored
             if (gamesByID.TryGetValue(id, out _game)) { return _game; }
             //If not, find the correct element in the file
             XElement element = FindElementByID(id);
@@ -54,7 +54,7 @@ namespace DataAccess.Repositories
         public override Game GetGame(string title)
         {
             Game _game;
-            //Check if we already have the show stored
+            //Check if we already have the game stored
             if (gamesByTitle.TryGetValue(title, out _game)) { return _game; }
             XElement element = FindElementByTitle(title);
             if (element == null) { return null; }
@@ -62,18 +62,18 @@ namespace DataAccess.Repositories
         }
         public override Game CreateOrGetGame(string title, bool persist = true)
         {
-            //See if we already have the show
+            //See if we already have the game
             Game _game = GetGame(title);
             if (_game == null)
             {
-                //Create and store a new show
+                //Create and store a new game
                 _game = new Game();
                 _game.ID = nextID;
                 _game.Title = title;
-                //Put show in dictionaries
+                //Put game in dictionaries
                 gamesByTitle.Add(_game.Title, _game);
                 gamesByID.Add(_game.ID, _game);
-                //Put the show into the XML document
+                //Put the game into the XML document
                 XElement element = new XElement("Game",
                     new XAttribute("Title", _game.Title),
                     new XAttribute("ID", _game.ID));
@@ -169,9 +169,12 @@ namespace DataAccess.Repositories
         {
             if (cascade)
             {
-                //Cascade to children
+                foreach (Faction faction in deleted.Factions)
+                {
+                    factory.FactionRepository.DeleteFaction(faction, true);
+                }
             }
-            if (true /* Cascade succeeded */)
+            if (deleted.Factions.Count == 0)
             {
                 //Updated references and cache
                 gamesByTitle.Remove(deleted.Title);
@@ -230,13 +233,20 @@ namespace DataAccess.Repositories
             //Add to dictionaries
             gamesByID.Add(_game.ID, _game);
             gamesByTitle.Add(_game.Title, _game);
-            //TODO: Add in recursive parsing of the game's contents here.
+            //Recursive parsing of the game's contents.
+            //Factions
+            IEnumerable<XElement> factions = element.Elements("Faction");
+            foreach (XElement faction in factions)
+            {
+                //This will recursively add the episodes back to the season
+                (factory.FactionRepository as XMLFactionRepository).ParseFaction(faction);
+            }
             all.Add(_game);
             return _game;
         }
         internal XElement FindElementByTitle(string title)
         {
-            return (from XElement in factory.Document.Descendants("game")
+            return (from XElement in factory.Document.Descendants("Game")
                     where XElement.Attribute("Title").Value.Equals(title)
                     select XElement).FirstOrDefault();
         }
@@ -248,8 +258,8 @@ namespace DataAccess.Repositories
         }
         internal void LoadAll()
         {
-            List<XElement> elements = (from XElement in factory.Document.Descendants("game")
-                    select XElement).ToList();
+            IEnumerable<XElement> elements = (from XElement in factory.Document.Descendants("game")
+                    select XElement);
             foreach (XElement element in elements)
             {
                 ParseGame(element);
