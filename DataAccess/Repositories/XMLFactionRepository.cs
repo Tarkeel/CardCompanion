@@ -50,8 +50,7 @@ namespace DataAccess.Repositories
             if (_faction == null)
             {
                 //Create and store a new faction
-                _faction = new Faction(game);
-                _faction.ID = nextID;
+                _faction = new Faction(nextID, game);
                 _faction.Title = title;
                 //Put faction in dictionaries
                 factionsByComposite.Add(BuildComposite(game, _faction.Title), _faction);
@@ -136,8 +135,7 @@ namespace DataAccess.Repositories
             if (_id == null)
             {
                 //This really shouldn't be possible, but we can always fix it by setting a new ID.
-                _faction = new Faction(_game);
-                _faction.ID = nextID;
+                _faction = new Faction(nextID, _game);
                 element.Add(new XAttribute("ID", _faction.ID));
                 nextID++;
                 factory.ConfigurationRepository.SetValue("NextFactionID", Convert.ToString(nextID));
@@ -147,8 +145,7 @@ namespace DataAccess.Repositories
                 //Check if the ID is stored first
                 if (factionsByID.TryGetValue(Convert.ToInt32(_id.Value), out _faction)) { return _faction; }
                 //It's not stored, so create a new and parse it
-                _faction = new Faction(_game);
-                _faction.ID = Convert.ToInt32(_id.Value);
+                _faction = new Faction(Convert.ToInt32(_id.Value), _game);
             }
             //Attribute - title
             XAttribute _title = element.Attribute("Title");

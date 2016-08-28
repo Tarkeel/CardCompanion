@@ -67,8 +67,7 @@ namespace DataAccess.Repositories
             if (_game == null)
             {
                 //Create and store a new game
-                _game = new Game();
-                _game.ID = nextID;
+                _game = new Game(nextID);
                 _game.Title = title;
                 //Put game in dictionaries
                 gamesByTitle.Add(_game.Title, _game);
@@ -195,8 +194,7 @@ namespace DataAccess.Repositories
             if (_id == null)
             {
                 //This really shouldn't be possible, but we can always fix it by setting a new ID.
-                _game = new Game();
-                _game.ID = nextID;
+                _game = new Game(nextID);
                 element.Add(new XAttribute("ID", _game.ID));
                 nextID++;
                 factory.ConfigurationRepository.SetValue("NextGameID", Convert.ToString(nextID));
@@ -206,8 +204,7 @@ namespace DataAccess.Repositories
                 //Check if the ID is stored first
                 if (gamesByID.TryGetValue(Convert.ToInt32(_id.Value), out _game)) { return _game; }
                 //It's not stored, so create a new and parse it
-                _game = new Game();
-                _game.ID = Convert.ToInt32(_id.Value);
+                _game = new Game(Convert.ToInt32(_id.Value));
             }
             //Attribute - title
             XAttribute _title = element.Attribute("Title");

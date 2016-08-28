@@ -11,15 +11,15 @@ namespace DataAccess.Types
     public class ObservableFactionCollection : ObservableCollection<Faction> { }
     public class Faction : Observable
     {
-        internal Faction(Game _game)
-        {
-            game = _game;
-        }
         private long id;
-        public long ID
+        public long ID { get { return id; } }
+        private Game game;
+        public Game Game { get { return Game; } }
+
+        internal Faction(long _id, Game _game)
         {
-            get { return id; }
-            set { VerifyPropertyChange<long>("ID", ref id, ref value); }
+            id = _id;
+            game = _game;
         }
         private string title;
         public string Title
@@ -45,8 +45,5 @@ namespace DataAccess.Types
             get { return colourBackground; }
             set { VerifyPropertyChange<string>("ColourBackground", ref colourBackground, ref value); }
         }
-        //NOTE: Changing the game of a faction on the fly has dire consequences, so we disable it.
-        private Game game;
-        public Game Game { get { return Game; } }
     }
 }
