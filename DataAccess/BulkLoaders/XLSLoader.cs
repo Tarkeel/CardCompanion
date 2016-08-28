@@ -36,6 +36,7 @@ namespace DataAccess.BulkLoaders
         {
             DataSet data = parseFile();
             importGames(data.Tables["Games"]);
+            importFactions(data.Tables["Factions"]);
             repositories.Persist();
         }
         private DataSet parseFile()
@@ -58,9 +59,14 @@ namespace DataAccess.BulkLoaders
                 //TODO: dynamic determination of table names
                 //Games:
                 cmd.CommandText = string.Format("SELECT * FROM [{0}]", "Game$");
-                DataTable table = new DataTable("Games");
-                new OleDbDataAdapter(cmd).Fill(table);
-                result.Tables.Add(table);
+                DataTable gameTable = new DataTable("Games");
+                new OleDbDataAdapter(cmd).Fill(gameTable);
+                result.Tables.Add(gameTable);
+                //Games:
+                cmd.CommandText = string.Format("SELECT * FROM [{0}]", "Faction$");
+                DataTable factionTable = new DataTable("Factions");
+                new OleDbDataAdapter(cmd).Fill(factionTable);
+                result.Tables.Add(factionTable);
 
                 //Close out
                 cmd = null;
@@ -120,7 +126,7 @@ namespace DataAccess.BulkLoaders
                         break;
                     default:
                         //TODO: Move this to logging
-                        Console.WriteLine("Unhandled column: {0}", col.ColumnName);
+                        Console.WriteLine("Unhandled column in Game: {0}", col.ColumnName);
                         break;
                 }
                 counter++;
@@ -240,6 +246,137 @@ namespace DataAccess.BulkLoaders
                         {
                             //TODO: Update this for user confirmation
                             if (!game.BannerPath.Equals(_banner)) { Console.WriteLine("{0}: BannerPath {1} blocked by existing value {2};", game.Title, _banner, game.BannerPath); }
+                        }
+                    }
+                    //Save if needed, delayed persist
+                    if (updated)
+                    {
+                        repositories.GameRepository.UpdateGame(game, false);
+                    }
+                    //Report progress
+                    rowCount++;
+                    if (worker.WorkerReportsProgress) { worker.ReportProgress(rowCount * 100 / totalRows, String.Format("{0} of {1} rows imported.", rowCount, totalRows)); }
+                }
+            }
+            #endregion
+        }
+        private void importFactions(DataTable source)
+        {
+            int colGame = -1;
+            int colTitle = -1;
+            int colIconPath = -1;
+            int colColourText = -1;
+            int colColourBackground = -1;
+            #region Map column headers
+            //Determine what the column maps to
+            int counter = 0;
+            foreach (DataColumn col in source.Columns)
+            {
+                String column = col.ColumnName.ToLower();
+                switch (column)
+                {
+                    case "game_name":
+                    case "game":
+                    case "name":
+                        colGame = counter;
+                        break;
+                    case "faction":
+                    case "title":
+                        colTitle = counter;
+                        break;
+                    case "icon":
+                    case "iconpath":
+                        colIconPath = counter;
+                        break;
+                    case "text":
+                    case "colourtext":
+                    case "textcolour":
+                        colColourText = counter;
+                        break;
+                    case "background":
+                    case "colourbackground":
+                    case "backgroundcolour":
+                        colColourBackground = counter;
+                        break;
+                    default:
+                        //TODO: Move this to logging
+                        Console.WriteLine("Unhandled column in Faction: {0}", col.ColumnName);
+                        break;
+                }
+                counter++;
+            }
+            #endregion
+            #region Process and import data
+            int totalRows = source.Rows.Count;
+            int rowCount = 0;
+            if (colTitle != -1)
+            {
+                foreach (DataRow row in source.Rows)
+                {
+                    if (worker.CancellationPending)
+                    {
+                        eventArgs.Cancel = true;
+                        break;
+                    }
+                    Game game = null;
+                    Faction faction = null;
+                    bool updated = false;
+                    //Game
+                    if (colGame != -1 && !DBNull.Value.Equals(row[colGame]))
+                    {
+                        game = repositories.GameRepository.CreateOrGetGame(Convert.ToString(row[colGame]), false);
+                    }
+                    //Title
+                    if (game != null && colTitle != -1 && !DBNull.Value.Equals(row[colTitle]))
+                    {
+                        faction = repositories.FactionRepository.CreateOrGetFaction(game, Convert.ToString(row[colTitle]), false);
+                    }
+                    //IconPath
+                    if (faction != null && colIconPath != -1 && !DBNull.Value.Equals(row[colIconPath]))
+                    {
+                        string _path = Convert.ToString(row[colIconPath]);
+                        if (faction.IconPath == null || faction.IconPath.Equals(""))
+                        {
+                            //Only overwrite blank values
+                            faction.IconPath = _path;
+                            updated = true;
+                        }
+                        else
+                        {
+                            //TODO: Update this for user confirmation
+                            if (!faction.IconPath.Equals(_path)) { Console.WriteLine("{0}: IconPath {1} blocked by existing value {2};", faction.Title, _path, faction.IconPath); }
+                        }
+                    }
+                    //ColourText
+                    if (faction != null && colColourText != -1 && !DBNull.Value.Equals(row[colColourText]))
+                    {
+                        string _colour = Convert.ToString(row[colColourText]);
+                        if (faction.ColourText == null || faction.ColourText.Equals(""))
+                        {
+                            //Only overwrite blank values
+                            faction.ColourText = _colour;
+                            updated = true;
+                        }
+                        else
+                        {
+                            //TODO: Update this for user confirmation
+                            if (!faction.ColourText.Equals(_colour)) { Console.WriteLine("{0}: ColourText {1} blocked by existing value {2};", faction.Title, _colour, faction.ColourText); }
+                        }
+                    }
+                    //ColourBackground
+                    if (faction != null && colColourBackground != -1 && !DBNull.Value.Equals(row[colColourBackground]))
+                    {
+                        string _banner = Convert.ToString(row[colColourBackground]);
+                        if (faction.ColourBackground == null || faction.ColourBackground.Equals(""))
+                        {
+                            //Only overwrite blank values
+                            faction.ColourBackground = _banner;
+                            updated = true;
+                        }
+                        else
+                        {
+                            //TODO: Update this for user confirmation
+                            if (!faction.ColourBackground.Equals(_banner)) { Console.WriteLine("{0}: ColourBackground {1} blocked by existing value {2};", faction.Title, _banner, faction.ColourBackground); }
                         }
                     }
                     //Save if needed, delayed persist

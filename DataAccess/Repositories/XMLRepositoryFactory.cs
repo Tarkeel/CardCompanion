@@ -69,9 +69,9 @@ namespace DataAccess.Repositories
             if (nextFactionID == null || nextFactionID.Equals(""))
             {
                 ConfigurationRepository.SetValue("NextFactionID", "1");
-                gameRepository = new XMLGameRepository(this, 1);
+                factionRepository = new XMLFactionRepository(this, 1);
             }
-            else { gameRepository = new XMLGameRepository(this, Convert.ToInt32(nextFactionID)); }
+            else { factionRepository = new XMLFactionRepository(this, Convert.ToInt32(nextFactionID)); }
         }
         #endregion
         #region Versioning
