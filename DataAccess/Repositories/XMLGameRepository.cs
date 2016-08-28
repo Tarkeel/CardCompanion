@@ -121,8 +121,8 @@ namespace DataAccess.Repositories
             XAttribute _publisher = element.Attribute("Publisher");
             if (updated.Publisher != null && !updated.Publisher.Equals(""))
             {
-                if (_publisher != null) { _publisher.Value = updated.Url; }
-                else { element.Add(new XAttribute("Publisher", updated.Url)); }
+                if (_publisher != null) { _publisher.Value = updated.Publisher; }
+                else { element.Add(new XAttribute("Publisher", updated.Publisher)); }
             }
             else
             {

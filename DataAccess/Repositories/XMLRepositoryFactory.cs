@@ -67,7 +67,7 @@ namespace DataAccess.Repositories
         }
         #endregion
         #region Versioning
-        private long currentVersion = 0;
+        private long currentVersion = 1;
         /* Version History:
          * 0: Configuration branch
          * 1: Games branch
@@ -82,8 +82,9 @@ namespace DataAccess.Repositories
             switch (oldVersion)
             {
                 case 0:
-                    Document.Root.Element("Repository").Add(new XElement("Games"));
+                    Document.Root.Add(new XElement("Games"));
                     Document.Root.Attribute("version").Value = Convert.ToString(currentVersion);
+                    Save();
                     return true;
                 default:
                     return false;

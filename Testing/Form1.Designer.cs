@@ -28,34 +28,56 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.button1 = new System.Windows.Forms.Button();
+            this.buttonXLS = new System.Windows.Forms.Button();
+            this.backgroundWorkerXLS = new System.ComponentModel.BackgroundWorker();
+            this.progressXLS = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
-            // button1
+            // buttonXLS
             // 
-            this.button1.Location = new System.Drawing.Point(85, 74);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(106, 52);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "Clickme";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.buttonXLS.Location = new System.Drawing.Point(12, 12);
+            this.buttonXLS.Name = "buttonXLS";
+            this.buttonXLS.Size = new System.Drawing.Size(106, 31);
+            this.buttonXLS.TabIndex = 0;
+            this.buttonXLS.Text = "Load XLS";
+            this.buttonXLS.UseVisualStyleBackColor = true;
+            this.buttonXLS.Click += new System.EventHandler(this.buttonXLS_Click);
+            // 
+            // backgroundWorkerXLS
+            // 
+            this.backgroundWorkerXLS.WorkerReportsProgress = true;
+            this.backgroundWorkerXLS.WorkerSupportsCancellation = true;
+            this.backgroundWorkerXLS.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorkerXLS_DoWork);
+            this.backgroundWorkerXLS.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.backgroundWorkerXLS_ReportProgress);
+            this.backgroundWorkerXLS.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorkerXLS_Completed);
+            // 
+            // progressXLS
+            // 
+            this.progressXLS.Enabled = false;
+            this.progressXLS.Location = new System.Drawing.Point(124, 16);
+            this.progressXLS.Name = "progressXLS";
+            this.progressXLS.Size = new System.Drawing.Size(100, 22);
+            this.progressXLS.TabIndex = 1;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(282, 255);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.progressXLS);
+            this.Controls.Add(this.buttonXLS);
             this.Name = "Form1";
             this.Text = "Form1";
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
         #endregion
 
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button buttonXLS;
+        private System.ComponentModel.BackgroundWorker backgroundWorkerXLS;
+        private System.Windows.Forms.TextBox progressXLS;
     }
 }
 
