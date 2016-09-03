@@ -17,12 +17,16 @@ namespace DataAccess.Types
         {
             id = _id;
             factions = new ObservableFactionCollection();
+            cardtypes = new ObservableCardtypeCollection();
+            cards = new ObservableCardCollection();
         }
         #region Collections
         private ObservableFactionCollection factions;
         public ObservableFactionCollection Factions {  get { return factions; } }
         private ObservableCardtypeCollection cardtypes;
         public ObservableCardtypeCollection Cardtypes { get { return cardtypes; } }
+        private ObservableCardCollection cards;
+        public ObservableCardCollection Cards { get { return cards; } }
         #endregion
         #region Attributes
         private string title;

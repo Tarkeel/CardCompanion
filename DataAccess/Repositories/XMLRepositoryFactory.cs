@@ -80,6 +80,14 @@ namespace DataAccess.Repositories
                 cardtypeRepository = new XMLCardtypeRepository(this, 1);
             }
             else { cardtypeRepository = new XMLCardtypeRepository(this, Convert.ToInt32(nextCardtypeID)); }
+            //Initialize Card repository, with next ID from config
+            string nextCardID = ConfigurationRepository.GetValue("NextCardID");
+            if (nextCardID == null || nextCardID.Equals(""))
+            {
+                ConfigurationRepository.SetValue("NextCardID", "1");
+                cardRepository = new XMLCardRepository(this, 1);
+            }
+            else { cardRepository = new XMLCardRepository(this, Convert.ToInt32(nextCardID)); }
         }
         #endregion
         #region Versioning
@@ -127,6 +135,11 @@ namespace DataAccess.Repositories
         public override AbstractCardtypeRepository CardtypeRepository
         {
             get { return cardtypeRepository; }
+        }
+        private XMLCardRepository cardRepository;
+        public override AbstractCardRepository CardRepository
+        {
+            get { return cardRepository; }
         }
         #endregion
         internal void Save()

@@ -146,7 +146,7 @@ namespace DataAccess.Repositories
         #endregion
         private string BuildComposite(Game game, string cardtype)
         {
-            return string.Format("{0}#S{1}", game.Title, cardtype);
+            return string.Format("{0}#{1}", game.Title, cardtype);
         }
 
     }

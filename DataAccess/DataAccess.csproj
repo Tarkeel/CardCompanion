@@ -42,16 +42,19 @@
   <ItemGroup>
     <Compile Include="BulkLoaders\XLSLoader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repositories\AbstractCardRepository.cs" />
     <Compile Include="Repositories\AbstractCardtypeRepository.cs" />
     <Compile Include="Repositories\AbstractConfigurationRepository.cs" />
     <Compile Include="Repositories\AbstractFactionRepository.cs" />
     <Compile Include="Repositories\AbstractGameRepository.cs" />
     <Compile Include="Repositories\AbstractRepositoryFactory.cs" />
+    <Compile Include="Repositories\XMLCardRepository.cs" />
     <Compile Include="Repositories\XMLCardtypeRepository.cs" />
     <Compile Include="Repositories\XMLConfigurationRepository.cs" />
     <Compile Include="Repositories\XMLFactionRepository.cs" />
     <Compile Include="Repositories\XMLGameRepository.cs" />
     <Compile Include="Repositories\XMLRepositoryFactory.cs" />
+    <Compile Include="Types\Card.cs" />
     <Compile Include="Types\Cardtype.cs" />
     <Compile Include="Types\Faction.cs" />
     <Compile Include="Types\Observable.cs" />

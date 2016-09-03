@@ -170,10 +170,20 @@ namespace DataAccess.Repositories
             {
                 foreach (Faction faction in deleted.Factions)
                 {
-                    factory.FactionRepository.DeleteFaction(faction, true);
+                    factory.FactionRepository.DeleteFaction(faction, cascade);
+                }
+                foreach (Cardtype cardtype in deleted.Cardtypes)
+                {
+                    factory.CardtypeRepository.DeleteCardtype(cardtype, cascade);
+                }
+                foreach (Card card in deleted.Cards)
+                {
+                    factory.CardRepository.DeleteCard(card, cascade);
                 }
             }
-            if (deleted.Factions.Count == 0)
+            if (deleted.Factions.Count == 0 &&
+                deleted.Cardtypes.Count == 0 &&
+                deleted.Cards.Count == 0)
             {
                 //Updated references and cache
                 gamesByTitle.Remove(deleted.Title);
@@ -238,6 +248,21 @@ namespace DataAccess.Repositories
                 //This will recursively add the episodes back to the season
                 (factory.FactionRepository as XMLFactionRepository).ParseFaction(faction);
             }
+            //Cardtypes
+            IEnumerable<XElement> cardtypes = element.Elements("Cardtype");
+            foreach (XElement cardtype in cardtypes)
+            {
+                //This will recursively add the episodes back to the season
+                (factory.CardtypeRepository as XMLCardtypeRepository).ParseCardtype(cardtype);
+            }
+            //Cards
+            IEnumerable<XElement> cards = element.Elements("Card");
+            foreach (XElement card in cards)
+            {
+                //This will recursively add the episodes back to the season
+                (factory.CardRepository as XMLCardRepository).ParseCard(card);
+            }
+
             all.Add(_game);
             return _game;
         }
